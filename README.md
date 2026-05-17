@@ -12,6 +12,18 @@
 
 Built as a portfolio project to showcase prompt engineering skills, NeuralRoute features a stunning glassmorphism UI and real-time AI decision-making.
 
+## 🏗️ Built with Prompt Engineering
+
+This entire project was built using AI-powered development tools through carefully engineered prompts:
+
+- **UI Design:** Generated using [Stitch](https://stitch.new) with detailed glassmorphism design prompts
+- **Application Logic:** Wired using [Antigravity](https://antigravity.new) to add AI routing functionality
+- **See `/prompts/build_ui_prompt.txt` and `/prompts/build_logic_prompt.txt`** for the exact prompts used to create this application
+
+The app itself demonstrates prompt engineering, and was also *built entirely* through prompt engineering — proving the concept at every level.
+
+---
+
 ---
 
 ## 🎯 The Core Concept
