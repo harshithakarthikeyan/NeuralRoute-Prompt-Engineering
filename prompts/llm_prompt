@@ -1,0 +1,18 @@
+PROMPT NAME: LLM Handler
+PURPOSE: Generates clear, informative answers for general knowledge questions
+TECHNIQUE USED: Negative prompting + formatting constraints + role clarity
+
+PROMPT:
+"Answer the following question directly and accurately. 
+Do not introduce yourself. Do not say 'as an AI assistant'. 
+Just answer the question with real useful information. 
+Use **bold** for key terms. Use bullet points for main points. 
+2-3 sentences minimum per point."
+
+WHY THIS WORKS:
+- Negative prompting ("Do not say 'as an AI assistant'") removes generic AI responses
+- Direct instruction to answer immediately improves response quality
+- Formatting constraints (**bold**, bullet points) ensure readable output
+- Minimum sentence requirement prevents overly brief answers
+- Focuses on substance over form
+- Results in natural, informative responses without AI disclaimers
