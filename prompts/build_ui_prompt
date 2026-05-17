@@ -1,0 +1,77 @@
+PROMPT NAME: UI Design Prompt (Stitch)
+PURPOSE: Generate the NeuralRoute frontend interface
+TOOL USED: Stitch (UI Generation)
+DATE CREATED: [Your Date]
+
+FULL PROMPT:
+---
+Design a stunning desktop web application UI called "NeuralRoute" — a premium AI dashboard. The style must match a smooth, soft-edged macOS-style glassmorphism design with deep rounded cards, ambient glow lighting behind panels, and layered depth — similar to a high-end fintech dashboard aesthetic but for an AI product.
+
+COLOR PALETTE:
+- Background: #070d0b (near-black with green undertone)
+- Glass cards: rgba(15, 40, 30, 0.6) with backdrop blur
+- Card borders: rgba(52, 211, 153, 0.12)
+- Accent/glow: #2dd4a0 (teal), #10b981 (emerald green)
+- Text: #ecfdf5 (primary), #6ee7b7 (secondary), rgba(110,231,183,0.45) (muted)
+- Mode colors: Teal for LLM, Soft indigo #818cf8 for WEB, Emerald for RAG
+
+FONTS (Google Fonts):
+- "Plus Jakarta Sans" for all headings and labels
+- "Inter" for body and chat text
+- "JetBrains Mono" for code/prompt sections
+
+BACKGROUND ATMOSPHERE:
+- 3 large soft radial gradient orbs fixed behind everything: one teal top-left, one emerald bottom-right, one deep green center — all 15% opacity, 600–800px, very blurred — creating a breathing ambient glow
+- Subtle dot-grid texture overlay on the body
+
+GLASSMORPHISM CARD STYLE (apply to ALL panels and cards):
+- border-radius: 24px
+- backdrop-filter: blur(24px) saturate(180%)
+- background: rgba(15, 40, 30, 0.6)
+- border: 1px solid rgba(52, 211, 153, 0.12)
+- box-shadow: 0 8px 32px rgba(0,0,0,0.4)
+- Very smooth, soft, premium — like frosted dark green glass
+
+LAYOUT — DESKTOP ONLY (1440px wide, no mobile):
+Two columns side by side: 340px left panel + remaining right panel. Full viewport height. 24px padding. Gap 20px between panels. This is strictly a desktop UI, no responsive/mobile layout.
+
+LEFT PANEL — "Intelligence Panel":
+Full height glass card. Contains top to bottom:
+
+1. Header: "NeuralRoute" in Plus Jakarta Sans 700 with teal color + small "LIVE" label with 3 animated green pulsing dots next to it. Subtitle: "Prompt-Driven Routing Engine" in muted small text.
+
+2. Routing Mode Badge: Large pill spanning full width, 48px height, border-radius 14px. Shows "STANDBY" by default in muted style. Has space for 3 states — LLM (teal glow), WEB (indigo glow), RAG (emerald glow). Each with a left icon area and soft colored glow shadow.
+
+3. Process Stepper: 3 vertical steps connected by a thin line. Step 1: "Query Received", Step 2: "Routing Decision", Step 3: "Response Generated". Each has a circle node on the left, step title on the right, and a small status chip. Show Step 1 as completed (filled teal circle), Step 2 as active (pulsing glow ring), Step 3 as pending (dashed muted).
+
+4. Confidence Meter: Label "Route Confidence" + "94%" right-aligned in bold. Thin horizontal track (6px height, full rounded) with a teal-to-indigo gradient fill at 94%. Smooth and sleek.
+
+5. Prompt Inspector: Collapsible section titled "Active Prompts ▾". Inside: two dark inner glass blocks labeled "Router Prompt" (teal label) and "Generator Prompt" (indigo label) in JetBrains Mono 10px with some placeholder text visible.
+
+RIGHT PANEL — "Chat Interface":
+Full height glass card. Contains:
+
+1. Top header bar: Left side "NeuralRoute Chat" in Plus Jakarta Sans 700 + green live dot. Right side: settings icon and clear icon buttons in ghost style.
+
+2. Chat messages area (main scrollable area). Show these preloaded messages:
+   - User bubble (right-aligned, teal-tinted glass): "What is prompt engineering?"
+   - AI bubble (left-aligned, dark glass): A formatted response with bold text and bullet points. Below the bubble: small "🧠 LLM" chip in teal.
+   - User bubble: "Latest AI news today"
+   - AI bubble: A response with bullet points about AI news. Below: "🌐 WEB" chip in indigo.
+   User bubbles: border-radius 18px 18px 4px 18px. AI bubbles: border-radius 18px 18px 18px 4px.
+
+3. Suggested query chips above the input: 3 small pill buttons — "What is AI?", "Latest AI news", "Explain from my notes" — in ghost teal style.
+
+4. Bottom input bar: Full-width glass input (height 52px, border-radius 16px, teal focus glow). Right side: circular send button with gradient teal background and white arrow icon.
+
+The overall feel must be: premium, smooth, calm, intelligent — like a high-end AI product. Every corner rounded, every surface glowing softly, depth created through layered glass. Extremely polished.
+---
+
+WHY THIS APPROACH:
+- Detailed color specifications ensure consistent brand identity
+- Glassmorphism creates modern, premium aesthetic
+- Desktop-only focus maintains clean, spacious layout
+- Left panel shows intelligence (routing logic visible)
+- Right panel provides familiar chat UX
+- Ambient glows add "living" feel to static UI
+- This prompt was used in Stitch to generate the initial HTML/CSS structure
