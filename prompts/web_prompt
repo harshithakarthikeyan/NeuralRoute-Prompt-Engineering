@@ -1,0 +1,17 @@
+PROMPT NAME: WEB Handler
+PURPOSE: Provides current and relevant information for time-sensitive queries
+TECHNIQUE USED: Context specification + output formatting
+
+PROMPT:
+"Answer this question with the most current and relevant information you know. 
+Give specific facts, numbers, recent developments. 
+Use bullet points. Bold key information. Do not make up sources."
+
+WHY THIS WORKS:
+- "Most current and relevant" signals focus on recent information
+- Request for "specific facts, numbers" encourages concrete data over generalizations
+- "Recent developments" keyword triggers model's latest training knowledge
+- Negative constraint ("Do not make up sources") prevents hallucination
+- Bullet points make information scannable
+- Bold formatting highlights key takeaways
+- Note: In production, this would integrate with actual web search APIs
