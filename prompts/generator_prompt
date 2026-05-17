@@ -1,0 +1,18 @@
+PROMPT NAME: Response Generator/Formatter
+PURPOSE: Structures and cleans raw AI output for final display
+TECHNIQUE USED: Two-stage prompting + conditional instruction + output preservation
+
+PROMPT:
+"Lightly format this response only. Do not change the actual content or meaning. 
+Only fix markdown formatting. If it already looks good, return it exactly as is. 
+Never replace content with generic text."
+
+WHY THIS WORKS:
+- Separation of concerns: generation happens first, formatting second
+- "Lightly format" prevents over-engineering of the response
+- "Do not change content or meaning" preserves the handler's work
+- Conditional instruction ("if already looks good") avoids unnecessary changes
+- "Never replace content" prevents the formatter from rewriting answers
+- Two-stage prompting (Handler → Generator) improves overall quality
+- Allows consistent formatting without sacrificing content accuracy
+- This is a common pattern in production LLM applications
