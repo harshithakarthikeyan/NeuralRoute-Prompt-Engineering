@@ -168,6 +168,12 @@ Do not change content. Return polished output.
 The formatted response is shown with a mode indicator (LLM/WEB/RAG).
 
 ---
+## 🌐 Live Demo
+   
+   **[Try NeuralRoute Live →](https://yourusername.github.io/NeuralRoute-Prompt-Engineering/)**
+   
+   *Note: You'll need to enter your own Gemini API key to use the app.*
+---
 
 ## 🎓 Prompt Engineering Techniques Used
 
