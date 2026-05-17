@@ -46,7 +46,7 @@ The AI decides the routing strategy — **that's prompt engineering in action.**
 
 ### Intelligent Query Routing
 - **LLM Mode** 🧠 — Handles general knowledge, concepts, and explanations
-- **WEB Mode** 🌐 — Processes queries about current events and real-time information
+- **WEB Mode** 🌐 — Processes queries about current events and real-time information (Answers based on Gemini's most recent training knowledge (up to mid-2024))
 - **RAG Mode** 📚 — Answers from a curated knowledge base
 
 ### Visual Intelligence Panel
