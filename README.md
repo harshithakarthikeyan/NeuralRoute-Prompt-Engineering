@@ -24,8 +24,6 @@ The app itself demonstrates prompt engineering, and was also *built entirely* th
 
 ---
 
----
-
 ## 🎯 The Core Concept
 
 Traditional chatbots follow hardcoded rules:
