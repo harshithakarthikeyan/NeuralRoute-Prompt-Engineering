@@ -1,0 +1,80 @@
+PROMPT NAME: Application Logic Prompt (Antigravity)
+PURPOSE: Wire AI routing logic into the Stitch UI
+TOOL USED: Antigravity (Code Generation)
+DATE CREATED: [Your Date]
+
+FULL PROMPT:
+---
+Take the NeuralRoute UI from Stitch and wire it into a fully working AI application. Do not change the visual design — only add the JavaScript logic to make everything functional.
+
+API SETUP:
+All calls use fetch to: https://api.anthropic.com/v1/messages
+Headers: { "Content-Type": "application/json" } — no API key needed
+Model: "claude-sonnet-4-20250514"
+max_tokens: 1000
+All async/await with try/catch
+
+KNOWLEDGE BASE (define at top of script):
+const knowledgeBase = `
+Topic: Prompt Engineering — Designing inputs for AI to get desired outputs. Techniques: few-shot examples, chain-of-thought, role assignment.
+Topic: Neural Networks — Computational models inspired by the brain with layers of interconnected nodes.
+Topic: LLMs — Large Language Models trained on massive text. Examples: GPT-4, Claude, Gemini.
+Topic: RAG — Retrieval Augmented Generation retrieves relevant info from a knowledge base before generating a response.
+`;
+
+WHEN USER HITS SEND — run these steps in order:
+
+STEP 1 — ROUTER:
+Disable input + send button. Show typing indicator in chat. Update badge to pulsing "ANALYZING...".
+Call Claude:
+System: "You are a query router. Classify into LLM (general knowledge), WEB (current/latest/real-time info), or RAG (personal notes/documents/my file). Return ONLY JSON, no extra text: {\"route\":\"LLM\"} or {\"route\":\"WEB\"} or {\"route\":\"RAG\"}"
+User: [query]
+Parse JSON → get route. If parse fails, default to "LLM".
+Update left panel: badge to correct mode + color, stepper steps 1 and 2 lit up, confidence bar animated to random 88–98%, Router Prompt field updated with the system prompt text used.
+
+STEP 2A — if route is LLM:
+Call Claude:
+System: "You are a helpful AI assistant. Answer using markdown: **bold** key terms, use bullet points, keep under 200 words."
+User: [query]
+Get response text.
+
+STEP 2B — if route is WEB:
+Call Claude with extra field in body: tools: [{"type":"web_search_20250305","name":"web_search"}]
+System: "You are a web-aware AI. Search for current info and give a clean summarized answer with bullet points and bold key info."
+User: [query]
+Process response: loop data.content array, collect all blocks where type === "text", join their .text values into one string.
+
+STEP 2C — if route is RAG:
+Call Claude:
+System: "You are a document assistant. Answer ONLY from the provided document context. If not found say 'Not found in documents.'"
+User: "Document:\n" + knowledgeBase + "\n\nQuestion: " + [query]
+Get response text.
+
+STEP 3 — GENERATOR:
+Call Claude:
+System: "You are a response formatter. Clean and format the response: fix markdown, ensure consistent bullet points, add a bold TL;DR at the top if longer than 3 sentences. Return only the formatted response."
+User: "Format this: " + rawResponse
+Get final text. Update Generator Prompt field in left panel with this system prompt. Light up stepper Step 3.
+
+STEP 4 — DISPLAY:
+Remove typing indicator. Render AI bubble with basic markdown parsing (** → bold, bullet - → li items). Add mode chip below (🧠 LLM / 🌐 WEB / 📚 RAG) with correct color. Re-enable input.
+
+SUGGESTED CHIPS:
+Clicking any chip auto-fills the input field with that text.
+
+CLEAR BUTTON:
+Clears all messages (except preloaded examples), resets stepper to all-pending, resets badge to STANDBY, resets confidence to 0%, resets prompt inspector text to "Awaiting query..."
+
+ERROR HANDLING:
+Any failed API call → show AI bubble: "⚠️ Something went wrong. Please try again." in red-tinted glass style. Default route to LLM if router fails.
+---
+
+WHY THIS APPROACH:
+- Separates UI generation (Stitch) from logic wiring (Antigravity)
+- Uses actual AI API calls instead of mock/hardcoded responses
+- Implements true prompt-driven routing (not if-else keywords)
+- Four-stage pipeline: Router → Handler → Generator → Display
+- Each stage uses a different engineered prompt
+- Left panel visualizations stay in sync with actual API lifecycle
+- Error handling prevents app crashes
+- This prompt was used in Antigravity to add all JavaScript functionality
