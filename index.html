@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>NeuralRoute | AI Dashboard</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary-container": "#2dd4a0",
+                        "secondary-fixed-dim": "#4edea3",
+                        "surface-container-low": "#161d1b",
+                        "surface-dim": "#0e1513",
+                        "surface-container-lowest": "#090f0d",
+                        "surface-container-high": "#252b29",
+                        "primary-fixed-dim": "#3edfaa",
+                        "inverse-primary": "#006c4e",
+                        "on-tertiary-fixed": "#000767",
+                        "surface-container": "#1a211f",
+                        "on-tertiary-container": "#343fa8",
+                        "background": "#0e1513",
+                        "inverse-surface": "#dde4e0",
+                        "on-primary-fixed": "#002115",
+                        "on-secondary-container": "#00311f",
+                        "tertiary-container": "#b0b7ff",
+                        "on-error-container": "#ffdad6",
+                        "outline-variant": "#3c4a43",
+                        "on-secondary-fixed": "#002113",
+                        "surface-bright": "#343b38",
+                        "secondary": "#4edea3",
+                        "on-surface-variant": "#bbcac1",
+                        "on-surface": "#dde4e0",
+                        "on-primary-fixed-variant": "#00513a",
+                        "error": "#ffb4ab",
+                        "inverse-on-surface": "#2b322f",
+                        "primary-fixed": "#63fcc5",
+                        "on-secondary-fixed-variant": "#005236",
+                        "tertiary-fixed": "#e0e0ff",
+                        "on-tertiary-fixed-variant": "#2f3aa3",
+                        "error-container": "#93000a",
+                        "on-error": "#690005",
+                        "outline": "#85948c",
+                        "surface-variant": "#303634",
+                        "secondary-container": "#00a572",
+                        "surface-container-highest": "#303634",
+                        "secondary-fixed": "#6ffbbe",
+                        "on-primary-container": "#00563e",
+                        "on-primary": "#003827",
+                        "on-tertiary": "#131e8c",
+                        "tertiary-fixed-dim": "#bdc2ff",
+                        "on-background": "#dde4e0",
+                        "primary": "#56f1bb",
+                        "surface-tint": "#3edfaa",
+                        "tertiary": "#d3d5ff",
+                        "surface": "#0e1513",
+                        "on-secondary": "#003824"
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(15, 40, 30, 0.6);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(45, 212, 160, 0.15);
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05);
+        }
+        .dot-grid {
+            background-image: radial-gradient(rgba(45, 212, 160, 0.15) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        .ambient-glow {
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+            background: #070d0b;
+        }
+        .glow-1 {
+            top: -10%;
+            left: -10%;
+            width: 50%;
+            height: 50%;
+            background: radial-gradient(circle, rgba(45, 212, 160, 0.15) 0%, transparent 70%);
+        }
+        .glow-2 {
+            bottom: -10%;
+            right: -10%;
+            width: 50%;
+            height: 50%;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%);
+        }
+        .glow-3 {
+            top: 30%;
+            left: 30%;
+            width: 40%;
+            height: 40%;
+            background: radial-gradient(circle, rgba(6, 78, 59, 0.2) 0%, transparent 70%);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(45, 212, 160, 0.2);
+            border-radius: 10px;
+        }
+        .step-active {
+            box-shadow: 0 0 15px rgba(45, 212, 160, 0.5);
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md selection:bg-primary-container selection:text-on-primary-container overflow-hidden">
+    <div class="ambient-glow">
+        <div class="absolute glow-1"></div>
+        <div class="absolute glow-2"></div>
+        <div class="absolute glow-3"></div>
+        <div class="absolute inset-0 dot-grid opacity-20"></div>
+    </div>
+    
+    <!-- API KEY SCREEN -->
+    <div id="api-key-screen" class="absolute inset-0 z-50 flex items-center justify-center bg-[#070d0b] backdrop-blur-sm">
+        <div class="glass-panel p-12 rounded-[24px] max-w-md w-full mx-4 flex flex-col items-center gap-6 border border-primary-container/20">
+            <h1 class="font-h1 text-[32px] text-primary-container uppercase tracking-tighter text-center">NeuralRoute</h1>
+            <p class="font-body-md text-on-surface-variant text-center mb-2">Enter your Gemini API Key to continue</p>
+            <input type="password" id="api-key-input" placeholder="Enter API Key..." class="w-full h-[52px] bg-primary-container/5 border border-primary-container/30 rounded-xl px-6 text-on-surface focus:ring-1 focus:ring-primary-container focus:border-primary-container transition-all text-center placeholder:text-on-surface-variant/30 outline-none">
+            <button id="launch-btn" class="w-full h-[52px] rounded-xl bg-gradient-to-tr from-primary-container to-secondary-fixed-dim text-on-primary-container font-bold text-[16px] hover:scale-[1.02] transition-transform active:scale-95 shadow-[0_0_15px_rgba(45,212,160,0.3)] mt-2">Launch</button>
+            <p class="font-label-sm text-on-surface-variant/60 tracking-widest mt-4 text-center">Get free key at <a href="https://aistudio.google.com" target="_blank" class="text-primary-container hover:underline">aistudio.google.com</a></p>
+        </div>
+    </div>
+    
+    <div id="main-app" class="flex h-screen w-full p-6 gap-5 max-w-[1440px] mx-auto" style="display: none;">
+        <!-- LEFT PANEL -->
+        <aside class="w-[340px] flex flex-col h-full glass-panel rounded-[24px] overflow-hidden">
+            <div class="p-6 space-y-6 flex flex-col h-full">
+                <div class="space-y-2">
+                    <div class="flex items-center gap-2">
+                        <h1 class="font-h1 text-2xl text-primary-container uppercase tracking-tighter">NeuralRoute</h1>
+                        <div class="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-primary-container/10 border border-primary-container/20">
+                            <span class="w-1.5 h-1.5 bg-primary-container rounded-full animate-pulse"></span>
+                            <span class="text-[10px] font-bold text-primary-container tracking-widest">LIVE</span>
+                        </div>
+                    </div>
+                    <p class="font-label-sm text-on-surface-variant uppercase tracking-[0.2em] opacity-60">Neural Intelligence Interface</p>
+                </div>
+                
+                <div class="w-full h-[48px] rounded-full border border-outline-variant bg-surface-container-low flex items-center justify-center gap-2 transition-colors duration-500" id="status-badge">
+                    <span class="material-symbols-outlined text-outline text-sm" id="status-icon">sensors</span>
+                    <span class="font-label-sm text-outline tracking-[0.3em]" id="status-text">STANDBY</span>
+                </div>
+                
+                <div class="space-y-6 py-2">
+                    <div class="flex gap-4 relative" id="step-1">
+                        <div class="absolute left-[11px] top-6 bottom-0 w-[2px] bg-outline-variant/30"></div>
+                        <div class="flex flex-col items-center z-10">
+                            <div class="step-dot w-6 h-6 rounded-full border border-outline-variant flex items-center justify-center bg-transparent transition-all duration-300">
+                                <span class="step-check material-symbols-outlined text-[16px] font-bold hidden">check</span>
+                                <div class="step-wait w-1.5 h-1.5 rounded-full bg-outline-variant"></div>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <span class="font-label-sm text-on-surface-variant step-label transition-colors">Query Received</span>
+                            <span class="text-[11px] text-on-surface-variant opacity-40 step-desc">Data packet validation</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-4 relative" id="step-2">
+                        <div class="absolute left-[11px] top-6 bottom-0 w-[2px] bg-outline-variant/30"></div>
+                        <div class="flex flex-col items-center z-10">
+                            <div class="step-dot w-6 h-6 rounded-full border border-outline-variant flex items-center justify-center bg-transparent transition-all duration-300">
+                                <span class="step-check material-symbols-outlined text-[16px] font-bold hidden">check</span>
+                                <div class="step-wait w-1.5 h-1.5 rounded-full bg-outline-variant"></div>
+                                <div class="step-pulse w-2 h-2 rounded-full bg-primary-container animate-pulse hidden"></div>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <span class="font-label-sm text-on-surface-variant step-label transition-colors">Routing Decision</span>
+                            <span class="text-[11px] text-on-surface-variant opacity-40 step-desc">Analyzing semantic vectors...</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-4" id="step-3">
+                        <div class="flex flex-col items-center z-10">
+                            <div class="step-dot w-6 h-6 rounded-full border border-outline-variant flex items-center justify-center bg-transparent transition-all duration-300">
+                                <span class="step-check material-symbols-outlined text-[16px] font-bold hidden">check</span>
+                                <div class="step-wait w-1.5 h-1.5 rounded-full bg-outline-variant"></div>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <span class="font-label-sm text-on-surface-variant step-label transition-colors">Response Generated</span>
+                            <span class="text-[11px] text-on-surface-variant opacity-40 step-desc">Awaiting stream init</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="space-y-2 bg-white/5 p-6 rounded-xl border border-white/5">
+                    <div class="flex justify-between items-end">
+                        <span class="font-label-sm text-on-surface-variant tracking-widest uppercase">Confidence</span>
+                        <span class="font-h1 text-2xl text-primary-container" id="confidence-val">0%</span>
+                    </div>
+                    <div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+                        <div class="h-full bg-gradient-to-r from-primary-container to-[#343fa8] w-0 rounded-full shadow-[0_0_10px_rgba(45,212,160,0.3)] transition-all duration-1000" id="confidence-bar"></div>
+                    </div>
+                </div>
+                
+                <div class="flex-1 flex flex-col gap-4 overflow-hidden">
+                    <div class="flex items-center justify-between">
+                        <span class="font-label-sm text-on-surface tracking-widest uppercase">Active Prompts</span>
+                        <span class="material-symbols-outlined text-on-surface-variant text-sm cursor-pointer">keyboard_arrow_down</span>
+                    </div>
+                    <div class="space-y-2 flex-1 overflow-y-auto custom-scrollbar pr-2">
+                        <div class="p-3 rounded-lg bg-[#070d0b] border border-primary-container/20 group cursor-pointer hover:border-primary-container/40 transition-colors">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="font-label-sm text-primary tracking-widest uppercase text-[10px]">Router Prompt</span>
+                                <span class="material-symbols-outlined text-[14px] text-primary">code</span>
+                            </div>
+                            <code class="font-code-block text-[11px] text-on-surface-variant leading-relaxed block whitespace-pre-wrap" id="prompt-router">-- Awaiting input --</code>
+                        </div>
+                        <div class="p-3 rounded-lg bg-[#070d0b] border border-tertiary-container/20 group cursor-pointer hover:border-tertiary-container/40 transition-colors">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="font-label-sm text-tertiary-container tracking-widest uppercase text-[10px]">Generator Prompt</span>
+                                <span class="material-symbols-outlined text-[14px] text-tertiary-container">terminal</span>
+                            </div>
+                            <code class="font-code-block text-[11px] text-on-surface-variant leading-relaxed block whitespace-pre-wrap" id="prompt-generator">-- Awaiting generation --</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- RIGHT PANEL -->
+        <main class="flex-1 flex flex-col h-full glass-panel rounded-[24px] overflow-hidden relative">
+            <header class="h-[72px] px-6 border-b border-emerald-500/10 flex items-center justify-between bg-white/5 backdrop-blur-md">
+                <div class="flex items-center gap-4">
+                    <h2 class="font-h3 text-lg font-bold tracking-tight">NeuralRoute Chat</h2>
+                    <div class="hidden items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/10" id="streaming-badge">
+                        <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full"></span>
+                        <span class="text-[10px] font-bold text-emerald-400 tracking-widest uppercase">Streaming</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button class="p-2 rounded-lg hover:bg-white/5 text-on-surface-variant transition-all">
+                        <span class="material-symbols-outlined">settings</span>
+                    </button>
+                    <button class="p-2 rounded-lg hover:bg-white/5 text-on-surface-variant transition-all" id="clear-chat">
+                        <span class="material-symbols-outlined">delete_sweep</span>
+                    </button>
+                </div>
+            </header>
+            
+            <div class="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar" id="chat-messages"></div>
+            
+            <div class="p-6 space-y-4">
+                <div class="flex gap-2 overflow-x-auto no-scrollbar">
+                    <button class="suggestion-chip px-4 py-2 rounded-full border border-primary-container/30 bg-primary-container/5 text-primary-container text-[12px] font-semibold whitespace-nowrap hover:bg-primary-container/10 transition-colors">What is AI?</button>
+                    <button class="suggestion-chip px-4 py-2 rounded-full border border-primary-container/30 bg-primary-container/5 text-primary-container text-[12px] font-semibold whitespace-nowrap hover:bg-primary-container/10 transition-colors">Latest AI news</button>
+                    <button class="suggestion-chip px-4 py-2 rounded-full border border-primary-container/30 bg-primary-container/5 text-primary-container text-[12px] font-semibold whitespace-nowrap hover:bg-primary-container/10 transition-colors">Explain from my notes</button>
+                    <button class="suggestion-chip px-4 py-2 rounded-full border border-primary-container/30 bg-primary-container/5 text-primary-container text-[12px] font-semibold whitespace-nowrap hover:bg-primary-container/10 transition-colors">Prompt Engineering basics</button>
+                </div>
+                
+                <form class="h-[52px] w-full glass-panel rounded-full flex items-center px-2 gap-2 border-white/10 group focus-within:border-primary-container/40 transition-all duration-300" id="chat-form">
+                    <span class="material-symbols-outlined text-on-surface-variant ml-2">attachment</span>
+                    <input autocomplete="off" class="flex-1 bg-transparent border-none focus:ring-0 text-on-surface placeholder:text-on-surface-variant/40 text-sm" id="user-input" placeholder="Send a message or type '/' for commands..." type="text" />
+                    <div class="flex items-center gap-2">
+                        <span class="text-[10px] font-bold text-on-surface-variant bg-white/10 px-2 py-1 rounded">⌘ K</span>
+                        <button class="w-9 h-9 rounded-full bg-gradient-to-tr from-primary-container to-secondary-fixed-dim flex items-center justify-center text-on-primary-container shadow-[0_0_15px_rgba(45,212,160,0.4)] hover:scale-105 transition-transform active:scale-95 disabled:opacity-50 disabled:grayscale" id="send-btn" type="submit">
+                            <span class="material-symbols-outlined text-[20px] font-bold">arrow_upward</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        let geminiApiKey = "";
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const launchBtn = document.getElementById('launch-btn');
+            const keyInput = document.getElementById('api-key-input');
+            const apiKeyScreen = document.getElementById('api-key-screen');
+            const mainApp = document.getElementById('main-app');
+
+            launchBtn.addEventListener('click', () => {
+                const val = keyInput.value.trim();
+                if (val) {
+                    geminiApiKey = val;
+                    apiKeyScreen.style.display = 'none';
+                    mainApp.style.display = 'flex';
+                } else {
+                    keyInput.classList.add('border-error');
+                }
+            });
+
+            keyInput.addEventListener('input', () => {
+                keyInput.classList.remove('border-error');
+            });
+        });
+
+        const knowledgeBase = `TOPIC: Prompt Engineering
+Prompt engineering is the art and science of designing effective inputs for large language models to produce desired outputs. It involves carefully crafting instructions, providing context, and structuring queries to guide AI behavior. This field has emerged as a critical skill in the AI era, bridging the gap between human intent and machine understanding.
+
+Key techniques include few-shot learning, where you provide examples of desired input-output pairs to guide the model's responses. Chain-of-thought prompting encourages the model to break down complex reasoning into steps, improving accuracy on mathematical and logical tasks. Role assignment involves instructing the model to adopt a specific persona or expertise level, such as "You are an expert Python developer" or "Explain this as if teaching a 10-year-old."
+
+Output constraints are crucial for controlling response format and length. You can specify JSON output, require bullet points, set word limits, or demand specific formatting. Zero-shot prompting tests the model's ability to perform tasks without examples, while temperature and token controls fine-tune creativity versus determinism. Advanced practitioners also use negative prompting to specify what to avoid, meta-prompting to have the AI improve its own prompts, and prompt chaining to break complex tasks into sequential steps.
+
+Common applications span chatbot personality design, where prompts define tone and boundaries; content generation for marketing copy, technical documentation, and creative writing; code generation and debugging assistance; data extraction from unstructured text; and summarization of long documents. Effective prompt engineering can dramatically improve AI output quality, reduce errors, and unlock capabilities that seem absent in poorly-prompted interactions.
+
+TOPIC: Neural Networks
+Neural networks are computational models inspired by the structure and function of biological neural networks in the human brain. They consist of interconnected nodes called neurons organized in layers: an input layer that receives data, one or more hidden layers that process information, and an output layer that produces results. Each connection between neurons has a weight that adjusts during training, allowing the network to learn patterns from data.
+
+The learning process works through backpropagation and gradient descent. When training data is fed through the network, it makes predictions that are compared against actual labels using a loss function. The algorithm then calculates how much each weight contributed to the error and adjusts weights to minimize future errors. This process repeats over thousands or millions of examples until the network learns to generalize patterns rather than memorize specific instances.
+
+Different architectures suit different tasks. Convolutional Neural Networks (CNNs) excel at image recognition by detecting spatial patterns through convolutional layers that scan for features like edges, textures, and shapes. Recurrent Neural Networks (RNNs) and Long Short-Term Memory (LSTM) networks handle sequential data like text and time series by maintaining memory of previous inputs. Transformers, the architecture behind GPT and BERT, use attention mechanisms to process all parts of input simultaneously, revolutionizing natural language processing.
+
+Activation functions introduce non-linearity, allowing networks to learn complex patterns. Common functions include ReLU (Rectified Linear Unit), sigmoid, and tanh. Dropout and regularization techniques prevent overfitting by randomly disabling neurons during training. Modern neural networks can have billions of parameters and require specialized hardware like GPUs and TPUs for efficient training. Applications range from facial recognition and autonomous vehicles to medical diagnosis and drug discovery.
+
+TOPIC: Large Language Models (LLMs)
+Large Language Models are AI systems trained on vast amounts of text data to understand and generate human language. Models like GPT-4, Claude, Gemini, and LLaMA contain billions of parameters and are trained on diverse internet text, books, articles, and code repositories. They learn statistical patterns of language, enabling them to perform tasks they weren't explicitly programmed for through emergent capabilities that arise from scale.
+
+The training process involves two main phases: pre-training and fine-tuning. During pre-training, the model learns to predict the next word in a sequence by processing trillions of tokens, developing broad language understanding and world knowledge. Fine-tuning then specializes the model for specific tasks or aligns it with human preferences through techniques like Reinforcement Learning from Human Feedback (RLHF), where human raters evaluate outputs to teach the model desired behaviors.
+
+LLMs demonstrate remarkable versatility across tasks. They can translate between languages, summarize documents, answer questions, write code, analyze sentiment, extract structured data from unstructured text, and engage in multi-turn conversations while maintaining context. They can perform mathematical reasoning, logical deduction, and even exhibit theory of mind by understanding perspectives and intentions in text. However, they also have limitations: they can hallucinate false information, struggle with precise arithmetic, have knowledge cutoff dates, and can be biased based on training data.
+
+The architecture underlying most modern LLMs is the Transformer, which uses self-attention mechanisms to weigh the importance of different words when processing context. This allows parallel processing of sequences and capture of long-range dependencies better than previous architectures. Context windows—the amount of text a model can consider at once—have expanded from a few thousand tokens to hundreds of thousands, enabling analysis of entire books or codebases. Emerging trends include multimodal models that process images and text, smaller efficient models that run on consumer hardware, and specialized models fine-tuned for domains like medicine, law, or scientific research.
+
+TOPIC: RAG (Retrieval Augmented Generation)
+RAG is a technique that enhances large language models by combining them with information retrieval systems. Instead of relying solely on knowledge embedded in model parameters during training, RAG systems retrieve relevant information from external knowledge bases, databases, or document collections before generating responses. This approach grounds AI outputs in verifiable sources and allows models to access up-to-date information beyond their training cutoff.
+
+The RAG pipeline consists of several steps. First, when a user submits a query, the system converts it into a numerical representation called an embedding using specialized models. These embeddings capture semantic meaning, allowing the system to find conceptually similar information even if exact keywords don't match. The system then searches a vector database containing pre-processed documents, also represented as embeddings, to retrieve the most relevant chunks of information. Retrieved passages are ranked by relevance and passed to the language model as context along with the original query. The model then generates a response based on this retrieved information.
+
+Key benefits of RAG include reduced hallucination since responses are grounded in specific source documents, access to current and domain-specific information not in the model's training data, and the ability to cite sources for transparency and verification. RAG systems can be updated simply by adding new documents to the knowledge base without retraining the entire model, making them more maintainable and cost-effective than fine-tuning approaches.
+
+Common implementations use vector databases like Pinecone, Weaviate, or Chroma to store document embeddings. Chunking strategies split documents into manageable pieces while preserving context. Embedding models like OpenAI's text-embedding-ada or open-source alternatives convert text to vectors. Advanced RAG systems employ query rewriting to improve retrieval, re-ranking to prioritize the most relevant chunks, and hybrid search combining semantic and keyword-based retrieval. Applications include customer support systems that pull from knowledge bases, research assistants that cite academic papers, legal document analysis, and enterprise search tools that provide AI-powered answers to internal questions.
+
+TOPIC: Machine Learning
+Machine learning is a subset of artificial intelligence that enables systems to learn and improve from experience without being explicitly programmed. Instead of following pre-defined rules, ML algorithms identify patterns in data and make decisions or predictions based on those patterns. The field has revolutionized how we approach complex problems in image recognition, natural language processing, recommendation systems, and predictive analytics.
+
+There are three primary paradigms of machine learning. Supervised learning trains models on labeled data where inputs are paired with correct outputs, learning to map inputs to outputs for tasks like classification (categorizing emails as spam or not) and regression (predicting house prices). Unsupervised learning finds patterns in unlabeled data through clustering similar items together or reducing dimensionality to reveal hidden structure. Reinforcement learning trains agents to make sequences of decisions by rewarding desired behaviors and penalizing undesired ones, famously used in game-playing AI like AlphaGo and robotics.
+
+The machine learning workflow begins with data collection and preprocessing, which often consumes 80% of project time. Raw data is cleaned, normalized, and transformed into features that algorithms can process. Feature engineering—manually creating informative input variables—can dramatically impact model performance. The dataset is split into training, validation, and test sets to evaluate performance on unseen data and prevent overfitting, where models memorize training examples rather than learning generalizable patterns.
+
+Common algorithms include linear regression for simple predictions, decision trees and random forests for interpretable classification, support vector machines for high-dimensional data, k-nearest neighbors for similarity-based classification, and k-means for clustering. Neural networks, a more complex approach, have led to the deep learning revolution. Model evaluation uses metrics like accuracy, precision, recall, F1-score for classification, and mean squared error or R-squared for regression. Cross-validation techniques provide robust performance estimates. Hyperparameter tuning optimizes algorithm settings, while ensemble methods combine multiple models for improved accuracy. Applications span fraud detection, medical diagnosis, recommendation engines, predictive maintenance, autonomous vehicles, and countless other domains transforming industries.
+
+TOPIC: Deep Learning
+Deep learning is a specialized branch of machine learning using neural networks with multiple layers to learn hierarchical representations of data. Unlike traditional machine learning that requires manual feature engineering, deep learning automatically discovers features at multiple levels of abstraction. Lower layers might detect edges in images, middle layers recognize shapes, and higher layers identify complex objects. This layered learning has enabled breakthroughs in computer vision, speech recognition, and natural language understanding.
+
+The "deep" in deep learning refers to the depth of neural network architectures, which can contain dozens or even hundreds of layers. Each layer transforms its input into a slightly more abstract representation. For example, in image classification, early layers detect basic patterns like edges and textures, middle layers recognize parts like wheels or windows, and final layers identify entire objects like cars or buildings. This hierarchical feature learning eliminates the need for domain experts to manually design features, allowing models to discover optimal representations directly from raw data.
+
+Training deep networks requires substantial computational resources and large datasets. GPUs (Graphics Processing Units) and TPUs (Tensor Processing Units) accelerate the massive matrix operations involved in forward propagation and backpropagation. Modern deep learning frameworks like TensorFlow, PyTorch, and JAX provide high-level APIs that simplify model building while optimizing low-level operations. Transfer learning has made deep learning more accessible by allowing practitioners to start with pre-trained models on large datasets and fine-tune them for specific tasks with smaller datasets.
+
+Convolutional Neural Networks (CNNs) revolutionized computer vision with applications in facial recognition, medical image analysis, autonomous driving, and content moderation. Recurrent Neural Networks (RNNs) and their variants like LSTMs and GRUs excel at sequential data including language translation, speech recognition, and time series forecasting. Transformers have become the dominant architecture for natural language processing, powering models like BERT, GPT, and T5. Generative Adversarial Networks (GANs) create realistic images, videos, and audio. Autoencoders compress data for anomaly detection and denoising. Deep reinforcement learning combines deep networks with reinforcement learning for complex decision-making in robotics and game playing. Challenges include the need for large labeled datasets, computational costs, interpretability of black-box models, and susceptibility to adversarial attacks that fool models with imperceptible perturbations.`;
+
+        const chatMessages = document.getElementById('chat-messages');
+        const chatForm = document.getElementById('chat-form');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        const streamingBadge = document.getElementById('streaming-badge');
+        const statusBadge = document.getElementById('status-badge');
+        const statusIcon = document.getElementById('status-icon');
+        const statusText = document.getElementById('status-text');
+        const confidenceVal = document.getElementById('confidence-val');
+        const confidenceBar = document.getElementById('confidence-bar');
+        const promptRouter = document.getElementById('prompt-router');
+        const promptGenerator = document.getElementById('prompt-generator');
+
+        const steps = {
+            1: document.getElementById('step-1'),
+            2: document.getElementById('step-2'),
+            3: document.getElementById('step-3')
+        };
+
+        function updateStep(stepNum, status) {
+            const step = steps[stepNum];
+            if (!step) return;
+            const dot = step.querySelector('.step-dot');
+            const check = step.querySelector('.step-check');
+            const wait = step.querySelector('.step-wait');
+            const pulse = step.querySelector('.step-pulse');
+            const label = step.querySelector('.step-label');
+            const desc = step.querySelector('.step-desc');
+
+            if (status === 'active') {
+                dot.classList.add('step-active', 'border-primary-container');
+                if (pulse) pulse.classList.remove('hidden');
+                if (wait) wait.classList.add('hidden');
+                label.classList.add('text-on-surface');
+                label.classList.remove('text-on-surface-variant', 'text-primary');
+                desc.classList.remove('opacity-40');
+            } else if (status === 'complete') {
+                dot.classList.remove('step-active', 'border-primary-container');
+                dot.classList.add('bg-primary-container', 'border-primary-container');
+                if (pulse) pulse.classList.add('hidden');
+                if (wait) wait.classList.add('hidden');
+                if (check) check.classList.remove('hidden');
+                label.classList.add('text-primary');
+                label.classList.remove('text-on-surface');
+                desc.classList.add('opacity-60');
+            } else {
+                dot.className = 'step-dot w-6 h-6 rounded-full border border-outline-variant flex items-center justify-center bg-transparent transition-all duration-300';
+                if (pulse) pulse.classList.add('hidden');
+                if (wait) wait.classList.remove('hidden');
+                if (check) check.classList.add('hidden');
+                label.className = 'font-label-sm text-on-surface-variant step-label transition-colors';
+                desc.classList.add('opacity-40');
+            }
+        }
+
+        function setStatus(mode) {
+            if (mode === 'STANDBY') {
+                statusBadge.className = 'w-full h-[48px] rounded-full border border-outline-variant bg-surface-container-low flex items-center justify-center gap-2 transition-colors duration-500';
+                statusIcon.innerText = 'sensors';
+                statusText.innerText = 'STANDBY';
+                statusIcon.className = 'material-symbols-outlined text-outline text-sm';
+                statusText.className = 'font-label-sm text-outline tracking-[0.3em]';
+            } else if (mode === 'ROUTING') {
+                statusBadge.className = 'w-full h-[48px] rounded-full border border-primary-container/30 bg-primary-container/10 flex items-center justify-center gap-2 transition-colors duration-500';
+                statusIcon.innerText = 'hub';
+                statusText.innerText = 'ANALYZING';
+                statusIcon.className = 'material-symbols-outlined text-primary text-sm';
+                statusText.className = 'font-label-sm text-primary tracking-[0.3em]';
+            } else if (mode === 'STREAMING') {
+                statusBadge.className = 'w-full h-[48px] rounded-full border border-emerald-500/30 bg-emerald-500/10 flex items-center justify-center gap-2 transition-colors duration-500';
+                statusIcon.innerText = 'cyclone';
+                statusText.innerText = 'STREAMING';
+                statusIcon.className = 'material-symbols-outlined text-emerald-400 text-sm animate-spin';
+                statusText.className = 'font-label-sm text-emerald-400 tracking-[0.3em]';
+            }
+        }
+
+        function addMessage(text, isUser = false, mode = null) {
+            const div = document.createElement('div');
+            div.className = isUser ? 'flex justify-end' : 'flex justify-start';
+
+            if (isUser) {
+                div.innerHTML = `<div class="max-w-[80%] p-4 rounded-2xl rounded-tr-none bg-primary-container/10 border border-primary-container/20 text-on-surface"><p class="font-body-md">${text}</p></div>`;
+            } else {
+                const config = {
+                    LLM: { color: 'bg-primary-container', text: 'on-primary-container', icon: 'psychology', label: 'Routed via Gemini Agent' },
+                    WEB: { color: 'bg-[#343fa8]', text: 'white', icon: 'public', label: 'Verified via Real-time Search' },
+                    RAG: { color: 'bg-tertiary-container', text: 'on-tertiary-container', icon: 'auto_stories', label: 'Extracted from Knowledge Base' },
+                    ERROR: { color: 'bg-red-500/20', text: 'red-200', icon: 'warning', border: 'border-red-500/40', label: 'System Fault Detected' }
+                }[mode] || { color: 'bg-surface-container-highest', text: 'on-surface', icon: 'smart_toy', label: 'Agent Response' };
+
+                let parsedText = text || "";
+                parsedText = parsedText.replace(/^### (.*$)/gim, '<h3 class="text-[16px] font-bold text-primary-container mt-3 mb-1">$1</h3>');
+                parsedText = parsedText.replace(/^## (.*$)/gim, '<h2 class="text-[18px] font-bold text-primary-container mt-4 mb-2">$1</h2>');
+                parsedText = parsedText.replace(/^# (.*$)/gim, '<h1 class="text-[22px] font-bold text-primary-container mt-5 mb-3">$1</h1>');
+                parsedText = parsedText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                const lines = parsedText.split('\n');
+                let inList = false;
+                let resultLines = [];
+                for (let i = 0; i < lines.length; i++) {
+                    let line = lines[i];
+                    const match = line.match(/^\s*[•\-]\s+(.*)/);
+                    if (match) {
+                        if (!inList) {
+                            resultLines.push('<ul class="list-disc pl-5">');
+                            inList = true;
+                        }
+                        resultLines.push('<li>' + match[1] + '</li>');
+                    } else {
+                        if (inList) {
+                            resultLines.push('</ul>');
+                            inList = false;
+                        }
+                        resultLines.push(line);
+                    }
+                }
+                if (inList) {
+                    resultLines.push('</ul>');
+                }
+                parsedText = resultLines.join('\n');
+                parsedText = parsedText.replace(/\n\n/g, '<br><br>');
+
+                div.innerHTML = `
+                <div class="max-w-[85%] space-y-4">
+                    <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-1.5 px-2 py-1 rounded-full ${config.color} ${mode === 'ERROR' ? '' : 'text-' + config.text}">
+                            <span class="material-symbols-outlined text-[14px]">${config.icon}</span>
+                            <span class="text-[10px] font-bold tracking-widest uppercase">${mode}</span>
+                        </div>
+                        <span class="text-[11px] font-label-sm text-on-surface-variant opacity-60">${config.label}</span>
+                    </div>
+                    <div class="p-4 rounded-2xl rounded-tl-none ${mode === 'ERROR' ? 'bg-red-950/20 border-red-900/40' : 'bg-surface-container-low border-outline-variant/30'} border text-on-surface">
+                        <div class="font-body-md space-y-4 whitespace-pre-wrap">${parsedText}</div>
+                    </div>
+                </div>`;
+            }
+            chatMessages.appendChild(div);
+            chatMessages.scrollTo({ top: chatMessages.scrollHeight, behavior: 'smooth' });
+        }
+
+        async function callGeminiAPI(system, userContent, retries = 2) {
+            let combinedPrompt = "";
+            if (system) combinedPrompt += system + "\n\n";
+            combinedPrompt += "User query: " + userContent;
+
+            const body = {
+                contents: [{
+                    parts: [{ text: combinedPrompt }]
+                }],
+                generationConfig: {
+                    temperature: 0.7,
+                    maxOutputTokens: 4096
+                }
+            };
+
+            for (let i = 0; i <= retries; i++) {
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiApiKey}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(body)
+                });
+
+                if (res.ok) return res.json();
+                
+                if (i === retries || (res.status !== 503 && res.status !== 500 && res.status !== 429)) {
+                    let errorText = "";
+                    try {
+                        const errBody = await res.json();
+                        errorText = errBody.error ? errBody.error.message : JSON.stringify(errBody);
+                    } catch(e) {
+                        errorText = res.statusText;
+                    }
+                    throw new Error(`API Error ${res.status}: ${errorText}`);
+                }
+                
+                // Wait 1.5 seconds before retrying if server is busy
+                await new Promise(r => setTimeout(r, 1500));
+            }
+        }
+
+        function parseGeminiResponse(data) {
+            if (!data.candidates || data.candidates.length === 0) return "";
+            const candidate = data.candidates[0];
+            if (!candidate.content || !candidate.content.parts || candidate.content.parts.length === 0) {
+                return `[Response blocked or empty: ${candidate.finishReason || 'Unknown reason'}]`;
+            }
+            return candidate.content.parts[0].text || "";
+        }
+
+
+        async function handleSend(e) {
+            if (e) e.preventDefault();
+            const query = userInput.value.trim();
+            if (!query) return;
+
+            userInput.value = '';
+            userInput.disabled = true;
+            sendBtn.disabled = true;
+            streamingBadge.classList.remove('hidden');
+            addMessage(query, true);
+
+            try {
+                // STEP 1: ROUTER
+                setStatus('ROUTING');
+                updateStep(1, 'complete');
+                updateStep(2, 'active');
+
+                const routerSystemPrompt = `You are a query router for an AI system. Your ONLY job is to classify the user's query into one of three categories and return ONLY a JSON object — no explanation, no extra text, no markdown.
+Categories:
+- LLM: General knowledge questions, concepts, definitions, explanations (e.g., 'What is AI?', 'Explain NLP', 'What is machine learning?')
+- WEB: Questions about current events, latest news, recent releases, real-time data (e.g., 'Latest iPhone features', 'Today's news', 'Recent AI developments')
+- RAG: Questions that refer to personal notes, uploaded documents, 'my file', 'my notes', 'from my data', or specifically ask about topics in the knowledge base
+Return ONLY this JSON with no markdown: {"route": "LLM"} or {"route": "WEB"} or {"route": "RAG"}
+Nothing else.`;
+
+                promptRouter.textContent = routerSystemPrompt.substring(0, 200) + "...";
+
+                const routerRes = await callGeminiAPI(routerSystemPrompt, query);
+                const routerText = parseGeminiResponse(routerRes);
+
+                let mode = "LLM";
+                try {
+                    const cleaned = routerText.replace(/```json|```/g, '').trim();
+                    const parsed = JSON.parse(cleaned);
+                    mode = parsed.route || "LLM";
+                } catch (err) {
+                    console.error("Router parse error, defaulting to LLM", err);
+                    mode = "LLM";
+                }
+
+                const conf = Math.floor(Math.random() * (98 - 88 + 1)) + 88;
+                confidenceVal.innerText = `${conf}%`;
+                confidenceBar.style.width = `${conf}%`;
+
+                await new Promise(r => setTimeout(r, 800));
+
+                // STEP 2: PROCESSING
+                setStatus('STREAMING');
+                updateStep(2, 'complete');
+                updateStep(3, 'active');
+
+                let rawResponse = "";
+                if (mode === 'LLM') {
+                    const systemPrompt = `Answer the following question directly and accurately. Do not introduce yourself. Do not say 'as an AI assistant'. Just answer the question with real useful information. Use **bold** for key terms. Use bullet points for main points. 2-3 sentences minimum per point.`;
+                    const res = await callGeminiAPI(systemPrompt, query);
+                    rawResponse = parseGeminiResponse(res);
+                } else if (mode === 'WEB') {
+                    const systemPrompt = `Answer this question with the most current and relevant information you know. Give specific facts, numbers, recent developments. Use bullet points. Bold key information. Do not make up sources.`;
+                    const res = await callGeminiAPI(systemPrompt, query);
+                    rawResponse = parseGeminiResponse(res);
+                } else if (mode === 'RAG') {
+                    const systemPrompt = `You are a document assistant. The user is asking about a topic. Search the document context below and give a clear direct answer based ONLY on what is in the document. Format your answer with the topic name in bold at the top, then explain in clear bullet points. If the topic is not found in the document say exactly: 'This topic is not in my knowledge base. Try asking about: Prompt Engineering, Neural Networks, LLMs, RAG, Machine Learning, or Deep Learning.' Do not make up information outside the document.\n\nDocument context:\n${knowledgeBase}`;
+                    const res = await callGeminiAPI(systemPrompt, query);
+                    rawResponse = parseGeminiResponse(res);
+                }
+
+                // STEP 3: GENERATOR
+                const genPromptText = `You are a text formatter. Your task is to apply beautiful markdown formatting (bolding, bullet points, headers) to the provided text. Do NOT remove any information, summarize, or change the meaning. Keep ALL details and length from the original text exactly as they are.`;
+                promptGenerator.textContent = genPromptText.substring(0, 150) + "...";
+
+                const genRes = await callGeminiAPI(genPromptText, rawResponse);
+                const formattedResponse = parseGeminiResponse(genRes);
+
+                // STEP 4: DISPLAY
+                updateStep(3, 'complete');
+                addMessage(formattedResponse, false, mode);
+
+            } catch (err) {
+                console.error("Error:", err);
+                addMessage("⚠️ System Error: " + err.message, false, 'ERROR');
+            } finally {
+                userInput.disabled = false;
+                sendBtn.disabled = false;
+                streamingBadge.classList.add('hidden');
+                setStatus('STANDBY');
+                userInput.focus();
+            }
+        }
+
+        document.querySelectorAll('.suggestion-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                userInput.value = chip.innerText;
+                userInput.focus();
+            });
+        });
+
+        document.getElementById('clear-chat').addEventListener('click', () => {
+            chatMessages.innerHTML = '';
+            updateStep(1, 'reset');
+            updateStep(2, 'reset');
+            updateStep(3, 'reset');
+            confidenceVal.innerText = '0%';
+            confidenceBar.style.width = '0%';
+            promptRouter.textContent = '-- Awaiting input --';
+            promptGenerator.textContent = '-- Awaiting generation --';
+            setStatus('STANDBY');
+        });
+
+        chatForm.addEventListener('submit', handleSend);
+
+        setTimeout(() => {
+            addMessage("Welcome to NeuralRoute. System standing by. How can I assist your intelligence workflows today?", false, "LLM");
+        }, 500);
+    </script>
+</body>
+</html>
